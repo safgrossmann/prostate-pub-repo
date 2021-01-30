@@ -1,11 +1,6 @@
-#Command for sorting vcf files according to chr1-22 XY sort order 
-#change into filter output directory first
-for i in *complete_final_retained_4.vcf; do grep "^#" $i > tmp; grep "^[^#]" $i | sort -k1,1 -V -k2,2n >> tmp && mv tmp $i; done
-
-#Filter them using the script with long run times for job2
-#########################################################
-# Filter 0001-0024 and the buffer test samples from Rob #
-#########################################################
+####################
+# Filter 0001-0024 #
+####################
 screen
 DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
 cd $DIR
@@ -25,26 +20,7 @@ ControlProject=$(printf '1959,%.0s' {1..61} | perl -ne 'chop $_;print"$_";')
 ControlSample=$(printf 'PD40870b_lo0021,%.0s' {1..61} | perl -ne 'chop $_;print"$_";')
 FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
 $FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman
-#The samples Rob did for me (in project 1994)
-screen
-DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
-cd $DIR
-Project=$(printf '1994,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-Samples='C2_LCMBUFFER_REG_AUG2018,D3_LCMBUFFER_S4_AUG2018,E2_LCMBUFFER_S5_AUG2018,F2_LCMBUFFER_S6_AUG2018,G2_LCMBUFFER_S7_AUG2018,H2_LCMBUFFER_S8_AUG2018'
-ControlProject=$(printf '1959,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-ControlSample=$(printf 'PD40870b_lo0021,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
-$FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Results_Project1994/
-#6 samples that had to be repeated due to technical issue during sequencing (in project 1959)
-screen
-DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
-cd $DIR
-Project=$(printf '1959,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-Samples='PD40870b_lo0063,PD40870b_lo0066,PD40870b_lo0082,PD40870b_lo0089,PD40870b_lo0092,PD40870b_lo0104'
-ControlProject=$(printf '1959,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-ControlSample=$(printf 'PD40870b_lo0021,%.0s' {1..6} | perl -ne 'chop $_;print"$_";')
-FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
-$FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman
+
 
 ############################################
 # First round of filtering in 2019 - Feb19 #
@@ -95,28 +71,6 @@ $FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR
 Samples='PD40870b_lo0475,PD40870b_lo0476,PD40870b_lo0477,PD40870b_lo0478,PD40870b_lo0479,PD40870b_lo0480,PD40870b_lo0482,PD40870b_lo0483,PD40870b_lo0484,PD40870b_lo0485,PD40870b_lo0487,PD40870b_lo0488,PD40870b_lo0489,PD40870b_lo0490,PD40870b_lo0491,PD40870b_lo0495,PD40870b_lo0496,PD40870b_lo0497,PD40870b_lo0498,PD40870b_lo0499,PD40870b_lo0500,PD40870b_lo0501,PD40870b_lo0502,PD40870b_lo0503,PD40870b_lo0504,PD40870b_lo0505,PD40870b_lo0507,PD40870b_lo0508,PD40870b_lo0509,PD40870b_lo0510,PD40870b_lo0511,PD40870b_lo0512,PD40870b_lo0513,PD40870b_lo0514,PD40870b_lo0515,PD40870b_lo0516,PD40870b_lo0517,PD40870b_lo0518,PD40870b_lo0519,PD40870b_lo0520,PD40870b_lo0521,PD40870b_lo0522'
 $FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Filter_2019Mar04_c
 
-#######################################################
-# Sample management mistakes - check to be refiltered #
-#######################################################
-#Sample management marked several samples as sequence complete too early. Thus, these samples had finished caveman files and some were filtered.
-#The affected samples are saved in FilteredCaveman/PD40870b_FilteringRedoneSampleManagementMistake (13 total). Sample PD40870b_lo0404 and PD40870b_lo0418 were not filtered before
-cd /lustre/scratch119/casm/team176tv/sg18/Prostate
-grep -Ff FilteredCaveman/PD40870b_FilteringRedoneSampleManagementMistake PD40870b_FilteredVcfPresent_4Mar2019
-PD40870b_lo0380 #removed from Filter_2019Feb19_e
-PD40870b_lo0397 #removed from Filter_2019Feb19_e
-PD40870b_lo0398 #removed from Filter_2019Feb19_e
-PD40870b_lo0400 #removed from Filter_2019Feb19_e
-PD40870b_lo0401 #removed from Filter_2019Feb19_e
-grep -Ff FilteredCaveman/PD40870b_FilteringRedoneSampleManagementMistake PD40870b_CavemanFinished_4Mar2019 #only the ones not listed above are found below
-PD40870b_lo0405 #removed from Filter_2019Mar04_a
-PD40870b_lo0418 #removed from Filter_2019Mar04_a
-PD40870b_lo0419 #removed from Filter_2019Mar04_a
-PD40870b_lo0424 #removed from Filter_2019Mar04_b
-PD40870b_lo0426 #removed from Filter_2019Mar04_b
-PD40870b_lo0439 #removed from Filter_2019Mar04_b
-#also removed the entries from VAF-longlist with
-grep -vFf ../PD40870b_FilteringRedoneSampleManagementMistake VAF_longlist_4.txt > tmp && mv tmp VAF_longlist_4.txt
-
 ##############################
 # Filtering on 18 March 2019 #
 ##############################
@@ -130,22 +84,11 @@ ControlSample=$(printf 'PD40870b_lo0021,%.0s' {1..20} | perl -ne 'chop $_;print"
 Samples='PD40870b_lo0380,PD40870b_lo0397,PD40870b_lo0398,PD40870b_lo0400,PD40870b_lo0401,PD40870b_lo0405,PD40870b_lo0419,PD40870b_lo0424,PD40870b_lo0426,PD40870b_lo0439,PD40870b_lo0450,PD40870b_lo0452,PD40870b_lo0453,PD40870b_lo0454,PD40870b_lo0455,PD40870b_lo0456,PD40870b_lo0460,PD40870b_lo0471,PD40870b_lo0481,PD40870b_lo0506'
 FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
 $FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Filter_2019Mar18
-#################
-# Final Repeats #
-#################
-DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
-cd $DIR
-Project=$(printf '1959,%.0s' {1..3} | perl -ne 'chop $_;print"$_";')
-ControlProject=$(printf '1959,%.0s' {1..3} | perl -ne 'chop $_;print"$_";')
-ControlSample=$(printf 'PD40870b_lo0021,%.0s' {1..3} | perl -ne 'chop $_;print"$_";')
-Samples='PD40870b_lo0404,PD40870b_lo0418,PD40870b_lo0428'
-FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
-$FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Filter_PD40870b_Final3
 
 
-################################################
-# Filtering 37yr prostate and Amsbio prostates #
-################################################
+########################################
+# Filtering additional prostate donors #
+########################################
 DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
 cd $DIR
 Project=$(printf '1959,%.0s' {1..22} | perl -ne 'chop $_;print"$_";')
@@ -153,7 +96,7 @@ ControlProject=$(printf '1959,%.0s' {1..22} | perl -ne 'chop $_;print"$_";')
 ControlSample=$(printf 'PD42298b_lo0031,%.0s' {1..22} | perl -ne 'chop $_;print"$_";')
 Samples='PD42298b_lo0001,PD42298b_lo0002,PD42298b_lo0003,PD42298b_lo0004,PD42298b_lo0006,PD42298b_lo0007,PD42298b_lo0008,PD42298b_lo0015,PD42298b_lo0016,PD42298b_lo0018,PD42298b_lo0019,PD42298b_lo0020,PD42298b_lo0021,PD42298b_lo0022,PD42298b_lo0023,PD42298b_lo0024,PD42298b_lo0025,PD42298b_lo0026,PD42298b_lo0027,PD42298b_lo0028,PD42298b_lo0029,PD42298b_lo0030'
 FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
-$FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Filter_PD42298_37Rakesh #sample 19 did not finish filtering
+$FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/Filter_PD42298_37Rakesh 
 #22yr - 90
 DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
 cd $DIR
@@ -190,10 +133,6 @@ ControlSample=$(printf 'PD43393b_lo0001,%.0s' {1..9} | perl -ne 'chop $_;print"$
 Samples='PD43393b_lo0002,PD43393b_lo0003,PD43393b_lo0004,PD43393b_lo0005,PD43393b_lo0006,PD43393b_lo0007,PD43393b_lo0008,PD43393b_lo0009,PD43393b_lo0010'
 FILTER=/lustre/scratch119/casm/team176tv/sg18/INSTALZ/WGS/FilteredCaveman/runLCMFiltering_by_sample_project_speedup.sh
 $FILTER -pt $Project -st $Samples -pn $ControlProject -sn $ControlSample -o $DIR/FilteredCaveman/PD43393b_71Amsbio
-
-###################################
-# Filtering two donors from Luiza #
-###################################
 #warm autopsy
 DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
 cd $DIR
