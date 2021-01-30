@@ -70,27 +70,6 @@ bsub -J"$JOB.$STRUCTURE" -M"$MEM" -R"select[mem>$MEM] rusage[mem=$MEM] span[host
 -o $DIR/LOGS/stdout_$JOB.$STRUCTURE -e $DIR/LOGS/stderr_$JOB.$STRUCTURE \
 "R-3.3.0 < $RSCRIPT --no-save --no-restore --args $SCRIPTPATH $ALT $DEPTH  $MUT $OUT $BURNIN"
 done
-####### Finalise 250k clustering (mainly label switching as resource hungry) #######
-DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
-cd $DIR
-MEM=720000 
-QUEUE='hugemem' #teramem
-JOB='LabelSwitchFinalise250k'
-SCRIPTPATH="/nfs/users/nfs_s/sg18/Scripts/Prostate/DirichletClustering"
-RSCRIPT=$SCRIPTPATH/LabelSwitchingAndPlots_PAfter250kIterations.R
-#REMEMBER TO CHECK CORES SET AND NUMBER OF BURN IN IN RSCRIPT | tried with 2 cores and 220k burn-in
-CORE=2 #SET THIS TO THE SAME NUMBER OF CORES AS SPECIFIED IN R AS ISG SUSPENDS THE JOB OTHERWISE
-
-Structure4_Session='/lustre/scratch119/casm/team176tv/sg18/Prostate/ResultsSortedByMorphologicalStructure/Structure4/DirichletClustering_250k/ndp_2019_08_02_codjq/Rsession.dat'
-bsub -J"$JOB.Struc4" -M"$MEM" -R"select[mem>$MEM] rusage[mem=$MEM] span[hosts=1]" -n $CORE -q $QUEUE \
--o $DIR/LOGS/stdout.$QUEUE.$JOB.Structure4 -e $DIR/LOGS/stderr.$QUEUE.$JOB.Structure4 \
-"R-3.3.0 < $RSCRIPT --no-save --no-restore --args $Structure4_Session"
-
-#structure3 command
-Session='/lustre/scratch119/casm/team176tv/sg18/Prostate/ResultsSortedByMorphologicalStructure/Structure3/DirichletClustering_250k/ndp_2019_08_04_gwemj/Rsession.dat'
-bsub -J"$JOB.Struc3" -M"$MEM" -R"select[mem>$MEM] rusage[mem=$MEM] span[hosts=1]" -n $CORE -q $QUEUE \
--o $DIR/LOGS/stdout.$QUEUE.$JOB.Structure3 -e $DIR/LOGS/stderr.$QUEUE.$JOB.Structure3 \
-"R-3.3.0 < $RSCRIPT --no-save --no-restore --args $Session"
 
 
 ################################################
@@ -98,7 +77,7 @@ bsub -J"$JOB.Struc3" -M"$MEM" -R"select[mem>$MEM] rusage[mem=$MEM] span[hosts=1]
 ################################################
 DIR=/lustre/scratch119/casm/team176tv/sg18/Prostate
 cd $DIR
-MEM=1000000 #submitted to farm3 with 720000 to hugemem - can no longer submit jobs to cgpbar
+MEM=1000000 
 QUEUE='teramem' #hugemem
 JOB='LabelSwitchFinalise'
 SCRIPTPATH="/nfs/users/nfs_s/sg18/Scripts/Prostate/DirichletClustering"
